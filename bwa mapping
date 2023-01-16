@@ -14,8 +14,13 @@ bsub -q verylong -R "rusage[mem=84G]" "/omics/groups/OE0554/internal/EMIL/Kyanna
 # original bwa --> created GRCh38.primary_assembly.genome.fa.bwt and GRCh38.primary_assembly.genome.fa.sa files
 bsub -q verylong -R "rusage[mem=84G]" "/software/bwa/0.7.8/bin/bwa index GRCh38.primary_assembly.genome.fa"
 
-# paired-end mapping
+# paired-end mapping of normal sample
 bsub -q verylong -R "rusage[mem=50G]" "/omics/groups/OE0554/internal/EMIL/Kyanna/bwa/bwa-mem2-2.2.1_x64-linux/bwa-mem2.sse42 mem -t 16 /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_assembly.genome.fa EL8N-blood_S10_L001_R1_001.fastq EL8N-blood_S10_L001_R2_001.fastq > EL8N-blood_S10_L001.aln-pe.sam"
+
+# paired-end mapping of tumour samples
+while read i; do
+	bsub -q verylong -R "rusage[mem=50G]" "/omics/groups/OE0554/internal/EMIL/Kyanna/bwa/bwa-mem2-2.2.1_x64-linux/bwa-mem2.sse42 mem -t 16 /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_assembly.genome.fa ${i}_L001_R1_001.fastq ${i}_L001_R2_001.fastq > ${i}.aln-pe.sam"
+done < samples.txt
 
 # check distribution of bwa alignments with Integrative Genomics Viewer --> may have to increase stringency (should only cover about 500 areas = 50 genes x 10 reads per gene)
 # transfer bam and bai files to local directory
