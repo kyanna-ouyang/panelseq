@@ -12,3 +12,4 @@ Steps:
 4. strelka variant calling (Bash): call variants against normal sample (input: bam --> output: vcf)
 5. vcf analysis (Bash): extract desired information about variants (input: vcf --> output: tsv)
 6. biomart variant analysis (R): add gene names (input: tsv --> output: tsv)
+7. allele frequency: how to calculate frequency of specific variant alleles
