@@ -1,0 +1,7 @@
+# run in Bash
+
+# create empty file named samples.txt
+touch samples.txt
+
+# edit file
+vi samples.txt
