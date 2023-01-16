@@ -1,0 +1,43 @@
+# index GRCh38
+
+bsub -q verylong -R "rusage[mem=50G]" "/software/samtools/1.9/bin/samtools faidx GRCh38.primary_assembly.genome.fa"
+
+# convert SAM to BAM
+/software/samtools/1.9/bin/samtools view -S -b EL8N-blood_S10_L001.aln-pe.sam > EL8N-blood_S10_L001.aln-pe.bam
+/software/samtools/1.9/bin/samtools view -S -b EL8T-hC1-s1_S4_L001.aln-pe.sam > EL8T-hC1-s1_S4_L001.aln-pe.bam
+
+while read i;
+do
+	/software/samtools/1.9/bin/samtools view -S -b ${i}.aln-pe.sam > ${i}.aln-pe.bam
+done <samples.txt
+
+# sort normal BAM
+
+/software/samtools/1.9/bin/samtools sort EL8N-blood_S10_L001.aln-pe.bam -o EL8N-blood_S10_L001.aln-pe.sorted.bam
+
+# sort tumour BAM
+
+/software/samtools/1.9/bin/samtools sort EL8T-hC1-s1_S4_L001.aln-pe.bam -o EL8T-hC1-s1_S4_L001.aln-pe.sorted.bam
+
+while read i;
+do
+	/software/samtools/1.9/bin/samtools sort ${i}.aln-pe.bam -o ${i}.aln-pe.sorted.bam
+done <samples.txt
+
+# index normal BAM
+
+/software/samtools/1.9/bin/samtools index EL8N-blood_S10_L001.aln-pe.sorted.bam EL8N-blood_S10_L001.aln-pe.sorted.bam.bai
+
+# index tumour BAM
+
+/software/samtools/1.9/bin/samtools index EL8T-hC1-s1_S4_L001.aln-pe.sorted.bam EL8T-hC1-s1_S4_L001.aln-pe.sorted.bam.bai
+
+while read i;
+do
+	/software/samtools/1.9/bin/samtools index ${i}.aln-pe.sorted.bam ${i}.aln-pe.sorted.bam.bai
+done <samples.txt
+
+# CONFIGURATION ERROR: Reference genome mismatch: Reference fasta file is missing a chromosome found in the normal BAM/CRAM file: 'ENST00000456328.2'
+# attempted solution: https://www.biostars.org/p/434347/ --> abandoned because STAR on DNA reads might have generated unanticipated results and BWA is a better option
+samtools sort Star_Panel_03Nov22_EL8N-blood_S10_combinedAligned.toTranscriptome.out.bam  -o sorted_normal.bam && samtools index sorted_normal.bam indexed_normal.bam.bai && samtools view -o  sorted_normal.bam `seq 1 22 | sed 's/^/chr/' && echo X | sed 's/^/chr/' && echo Y | sed 's/^/chr/'`
+samtools sort Star_Panel_03Nov22_EL8T-hC1-s2_S6_combinedAligned.toTranscriptome.out.bam  -o sorted_tumor.bam && samtools index sorted_normal.bam indexed_tumor.bam.bai && samtools view -o  sorted_tumor.bam `seq 1 22 | sed 's/^/chr/' && echo X | sed 's/^/chr/' && echo Y | sed 's/^/chr/'`
