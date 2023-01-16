@@ -1,0 +1,25 @@
+# useful links:
+# https://eriqande.github.io/eca-bioinf-handbook/basic-handling-of-vcf-files.html
+# https://en.wikipedia.org/wiki/Variant_Call_Format
+
+# show stat summaries
+/software/bcftools/1.16/bin/bcftools stats EL10T-hC1-r1_S5.somatic.indels.vcf
+/software/bcftools/1.16/bin/bcftools stats EL10T-hC1-r1_S5.somatic.snvs.vcf
+
+# extract variant locations
+/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\n' EL10T-hC1-r1_S5.somatic.snvs.vcf
+
+# extract field(s) from info column
+/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%INFO/DP\n' EL10T-hC1-r1_S5.somatic.snvs.vcf
+
+# extract chrom, pos, ref, alt, qual and filter values
+while read i; do
+	/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n' ${i}.somatic.snvs.vcf > ${i}.snvs.tsv
+	/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n' ${i}.somatic.indels.vcf > ${i}.indels.tsv
+done < /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/samples.txt
+
+# export to local drive (to process in RStudio)
+while read i; do
+	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results/${i}.snvs.tsv .
+	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results/${i}.indels.tsv .
+done < samples.txt # sync from remote directory
