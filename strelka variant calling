@@ -1,0 +1,48 @@
+bsub -q verylong -n 12 -R "rusage[mem=50G]" -o /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.out -e /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.err -N \
+
+while read i; do \
+
+# CONFIGURATION
+mkdir results_${i} \
+
+STRELKA_INSTALL_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelka/strelka-2.9.10.centos6_x86_64" \
+
+STRELKA_ANALYSIS_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}" \
+
+hg38="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_assembly.genome.fa" \
+
+normal_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-blood_S10_L001.aln-pe.sorted.bam" \
+
+tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/${i}_L001.aln-pe.sorted.bam" \
+
+${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
+--normalBam $normal_BAM \
+--tumourBam $tumour_BAM \
+--referenceFasta $hg38 \
+--runDir $STRELKA_ANALYSIS_PATH \
+
+# EXECUTION
+
+${STRELKA_ANALYSIS_PATH}/runWorkflow.py -m local -j 8
+
+done < samples.txt
+
+# unzip vcf files
+while read i; do
+	gunzip -c results_${i}/results/variants/somatic.indels.vcf.gz > results_${i}/results/variants/somatic.indels.vcf
+	gunzip -c results_${i}/results/variants/somatic.snvs.vcf.gz > results_${i}/results/variants/somatic.snvs.vcf
+done < samples.txt
+
+# move all vcf files to one folder
+while read i; do
+	mv results_${i}/results/variants/somatic.indels.vcf results/${i}.somatic.indels.vcf
+	mv results_${i}/results/variants/somatic.snvs.vcf results/${i}.somatic.snvs.vcf
+done < samples.txt
+
+# sync to local drive (rsync example; can also drag and drop using mounted cluster)
+while read i; do
+	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}/results/variants/somatic.indels.vcf .
+	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}/results/variants/somatic.snvs.vcf .
+	mv somatic.indels.vcf ${i}.somatic.indels.vcf
+	mv somatic.snvs.vcf ${i}.somatic.snvs.vcf
+done < samples.txt
