@@ -1,3 +1,5 @@
+# run in Bash
+
 bsub -q verylong -n 12 -R "rusage[mem=50G]" -o /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.out -e /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.err -N \
 
 while read i; do \
