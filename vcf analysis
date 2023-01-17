@@ -1,72 +1,27 @@
+# run in Bash
+
+# useful links:
 # https://eriqande.github.io/eca-bioinf-handbook/basic-handling-of-vcf-files.html
 # https://en.wikipedia.org/wiki/Variant_Call_Format
 
-EL10T-hC1-r1_S5
-EL2T-organoids_S1
-EL8N-EL8N-p0_S3
-EL8N-tissue_S8
-EL8T-hC1-s1_S4
-EL8T-hC1-s2_S6
-EL8T-in1-s1_S7
-EL8T-in1-s2_S9
-EL8T-out2-s1_S11
-EL8T-tissue_S2
-
-# STATS
-
+# show stat summaries
 /software/bcftools/1.16/bin/bcftools stats EL10T-hC1-r1_S5.somatic.indels.vcf
 /software/bcftools/1.16/bin/bcftools stats EL10T-hC1-r1_S5.somatic.snvs.vcf
 
-/software/bcftools/1.16/bin/bcftools stats EL2T-organoids_S1.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL2T-organoids_S1.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8N-tissue_S8.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8N-tissue_S8.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-hC1-s1_S4.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-hC1-s1_S4.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-hC1-s2_S6.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-hC1-s2_S6.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-in1-s1_S7.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-in1-s1_S7.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-in1-s2_S9.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-in1-s2_S9.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-out2-s1_S11.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-out2-s1_S11.somatic.snvs.vcf
-
-/software/bcftools/1.16/bin/bcftools stats EL8T-tissue_S2.somatic.indels.vcf
-/software/bcftools/1.16/bin/bcftools stats EL8T-tissue_S2.somatic.snvs.vcf
-
-# LOCATION OF VARIANTS
-
+# extract variant locations
 /software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\n' EL10T-hC1-r1_S5.somatic.snvs.vcf
 
-# EXTRACT FIELD(S) FROM INFO COLUMN
-
+# extract field(s) from info column
 /software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%INFO/DP\n' EL10T-hC1-r1_S5.somatic.snvs.vcf
 
-# EXTRACT CHROM, POS, REF, ALT, QUAL AND FILTER
-
+# extract chrom, pos, ref, alt, qual and filter values
 while read i; do
 	/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n' ${i}.somatic.snvs.vcf > ${i}.snvs.tsv
 	/software/bcftools/1.16/bin/bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%QUAL\t%FILTER\n' ${i}.somatic.indels.vcf > ${i}.indels.tsv
 done < /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/samples.txt
 
-# EXPORT TO LOCAL DIRECTORY TO USE IN R
-
+# export to local drive (to process in RStudio)
 while read i; do
 	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results/${i}.snvs.tsv .
 	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results/${i}.indels.tsv .
 done < samples.txt # sync from remote directory
-
-# CALCULATE ALLELE FREQUENCIES
-refCounts = Value of FORMAT column $REF + “U” (e.g. if REF="A" then use the value in FOMRAT/AU)
-altCounts = Value of FORMAT column $ALT + “U” (e.g. if ALT="T" then use the value in FOMRAT/TU)
-tier1RefCounts = First comma-delimited value from $refCounts
-tier1AltCounts = First comma-delimited value from $altCounts
-Somatic allele freqeuncy is $tier1AltCounts / ($tier1AltCounts + $tier1RefCounts)
-
