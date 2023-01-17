@@ -1,41 +1,10 @@
-# TRIAL
-# CONFIGURATION
-
-STRELKA_INSTALL_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelka/strelka-2.9.10.centos6_x86_64"
-
-STRELKA_ANALYSIS_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial"
-
-hg38="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_assembly.genome.fa"
-
-normal_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-blood_S10_L001.aln-pe.sorted.bam"
-
-tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-hC1-s1_S4_L001.aln-pe.sorted.bam"
-
-bsub -q verylong -n 12 -R "rusage[mem=50G]" -o /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.out -e /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.err -N \
-${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
---normalBam $normal_BAM \
---tumourBam $tumour_BAM \
---referenceFasta $hg38 \
---runDir $STRELKA_ANALYSIS_PATH
-
-# EXECUTION (on single node)
-# Elapsed time for full workflow: 168 sec
-
-${STRELKA_ANALYSIS_PATH}/runWorkflow.py -m local -j 8
-
-# UNZIP VCF FILES
-
-gunzip somatic.indels.vcf.gz
-gunzip somatic.snvs.vcf.gz
-
-# RUN ON ALL SAMPLES
+# run in Bash
 
 bsub -q verylong -n 12 -R "rusage[mem=50G]" -o /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.out -e /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.err -N \
 
 while read i; do \
 
 # CONFIGURATION
-
 mkdir results_${i} \
 
 STRELKA_INSTALL_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelka/strelka-2.9.10.centos6_x86_64" \
@@ -47,16 +16,6 @@ hg38="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_asse
 normal_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-blood_S10_L001.aln-pe.sorted.bam" \
 
 tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/${i}_L001.aln-pe.sorted.bam" \
-
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL10T-hC1-r1_S5_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL2T-organoids_S1_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-EL8N-p0_S3_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-tissue_S8_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-hC1-s2_S6_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-in1-s1_S7_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-in1-s2_S9_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-out2-s1_S11_L001.aln-pe.sorted.bam"
-#tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8T-tissue_S2_L001.aln-pe.sorted.bam"
 
 ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
 --normalBam $normal_BAM \
@@ -70,27 +29,22 @@ ${STRELKA_ANALYSIS_PATH}/runWorkflow.py -m local -j 8
 
 done < samples.txt
 
-# UNZIP VCF FILES
-
+# unzip vcf files
 while read i; do
 	gunzip -c results_${i}/results/variants/somatic.indels.vcf.gz > results_${i}/results/variants/somatic.indels.vcf
 	gunzip -c results_${i}/results/variants/somatic.snvs.vcf.gz > results_${i}/results/variants/somatic.snvs.vcf
 done < samples.txt
 
-# MOVE ALL VCF FILES TO ONE FOLDER
-
+# move all vcf files to one folder
 while read i; do
 	mv results_${i}/results/variants/somatic.indels.vcf results/${i}.somatic.indels.vcf
 	mv results_${i}/results/variants/somatic.snvs.vcf results/${i}.somatic.snvs.vcf
 done < samples.txt
 
-# SYNC TO LOCAL
-
+# sync to local drive (rsync example; can also drag and drop using mounted cluster)
 while read i; do
 	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}/results/variants/somatic.indels.vcf .
 	rsync k545g@bsub01.lsf.dkfz.de:/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}/results/variants/somatic.snvs.vcf .
 	mv somatic.indels.vcf ${i}.somatic.indels.vcf
 	mv somatic.snvs.vcf ${i}.somatic.snvs.vcf
 done < samples.txt
-
-# NOTE: redo so that one does not have to enter password as many times as there are number of files to be transferred
