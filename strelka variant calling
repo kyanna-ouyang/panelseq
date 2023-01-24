@@ -1,33 +1,30 @@
 # run in Bash
 
-bsub -q verylong -n 12 -R "rusage[mem=50G]" -o /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.out -e /omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/strelka.err -N \
-
-while read i; do \
-
 # CONFIGURATION
+bsub -q verylong -n 24 -R "rusage[mem=50G]" 'while read i; do \
+
 mkdir results_${i} \
 
 STRELKA_INSTALL_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelka/strelka-2.9.10.centos6_x86_64" \
 
-STRELKA_ANALYSIS_PATH="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/results_${i}" \
+STRELKA_ANALYSIS_PATH="/omics/groups/OE0554/internal/EMIL/Toni/fuso/fastq/results_${i}" \
 
-hg38="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/GRCh38.primary_assembly.genome.fa" \
+ref_fuso="/omics/groups/OE0554/internal/EMIL/Toni/fuso/sequence.fasta" \
 
-normal_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/EL8N-blood_S10_L001.aln-pe.sorted.bam" \
+normal_BAM="/omics/groups/OE0554/internal/EMIL/Toni/fuso/fastq/31.aln-pe.sorted.bam" \
 
-tumour_BAM="/omics/groups/OE0554/internal/EMIL/Kyanna/strelkatrial/${i}_L001.aln-pe.sorted.bam" \
+test_BAM="/omics/groups/OE0554/internal/EMIL/Toni/fuso/fastq/${i}.aln-pe.sorted.bam" \
 
 ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
 --normalBam $normal_BAM \
---tumourBam $tumour_BAM \
---referenceFasta $hg38 \
+--tumourBam $test_BAM \
+--referenceFasta $ref_fuso \
 --runDir $STRELKA_ANALYSIS_PATH \
 
+done < /omics/groups/OE0554/internal/EMIL/Toni/fuso/ids.txt'
+
 # EXECUTION
-
-${STRELKA_ANALYSIS_PATH}/runWorkflow.py -m local -j 8
-
-done < samples.txt
+bsub -q verylong -n 24 -R "rusage[mem=50G]" "./runWorkflow.py -m local -j 8"
 
 # unzip vcf files
 while read i; do
