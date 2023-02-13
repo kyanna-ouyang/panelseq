@@ -18,25 +18,27 @@ snvs7 <- read.csv("EL8T-in1-s2_S9.snvs.tsv", sep = "\t", header = FALSE)
 snvs8 <- read.csv("EL8T-out2-s1_S11.snvs.tsv", sep = "\t", header = FALSE)
 snvs9 <- read.csv("EL8T-tissue_S2.snvs.tsv", sep = "\t", header = FALSE)
 
+# filter for variants that pass all quality filters
+snvs1 <- snvs1[which(snvs1$V6=="PASS"),]
+snvs2 <- snvs2[which(snvs2$V6=="PASS"),]
+snvs3 <- snvs3[which(snvs3$V6=="PASS"),]
+snvs4 <- snvs4[which(snvs4$V6=="PASS"),]
+snvs5 <- snvs5[which(snvs5$V6=="PASS"),]
+snvs6 <- snvs6[which(snvs6$V6=="PASS"),]
+snvs7 <- snvs7[which(snvs7$V6=="PASS"),]
+snvs8 <- snvs8[which(snvs8$V6=="PASS"),]
+snvs9 <- snvs9[which(snvs9$V6=="PASS"),]
+
 # delete "chr" from chromosome column
 snvs1$V1 <- gsub("chr", "", as.character(snvs1$V1))
-snvs1 <- snvs1[which(snvs1$V6=="PASS"),]
 snvs2$V1 <- gsub("chr", "", as.character(snvs2$V1))
-snvs2 <- snvs2[which(snvs2$V6=="PASS"),]
 snvs3$V1 <- gsub("chr", "", as.character(snvs3$V1))
-snvs3 <- snvs3[which(snvs3$V6=="PASS"),]
 snvs4$V1 <- gsub("chr", "", as.character(snvs4$V1))
-snvs4 <- snvs4[which(snvs4$V6=="PASS"),]
 snvs5$V1 <- gsub("chr", "", as.character(snvs5$V1))
-snvs5 <- snvs5[which(snvs5$V6=="PASS"),]
 snvs6$V1 <- gsub("chr", "", as.character(snvs6$V1))
-snvs6 <- snvs6[which(snvs6$V6=="PASS"),]
 snvs7$V1 <- gsub("chr", "", as.character(snvs7$V1))
-snvs7 <- snvs7[which(snvs7$V6=="PASS"),]
 snvs8$V1 <- gsub("chr", "", as.character(snvs8$V1))
-snvs8 <- snvs8[which(snvs8$V6=="PASS"),]
 snvs9$V1 <- gsub("chr", "", as.character(snvs9$V1))
-snvs9 <- snvs9[which(snvs9$V6=="PASS"),]
 
 # add sample column
 snvs1[,7] <- "EL10T-hC1-r1_S5"
