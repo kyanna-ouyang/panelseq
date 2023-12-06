@@ -12,9 +12,8 @@ Steps:
 4. Strelka2 variant calling (Bash): call variants against healthy sample (input: bam and bai --> output: vcf)
 5. SnpEff variant effect prediction (Bash): annotate variants for effect, type and severity (input: vcf --> output: vcf)
 6. BCFtools VCF manipulation (Bash): extract desired information about variants (input: vcf --> output: tsv)
-7. Calculate allele frequency (custom R code)
-8. Annotate variants with biomaRt (custom R code)
-9. Alternative to step 8: Annotate variants with annotation file (custom R code)
+7. Calculate allele frequency and annotate variants with biomaRt (custom R code)
+8. Alternative to 7: Calculate allele frequency and annotate variants with annotation file (custom R code)
 
 Links to documentation of tools used
 - BWA-mem2: https://github.com/bwa-mem2/bwa-mem2
