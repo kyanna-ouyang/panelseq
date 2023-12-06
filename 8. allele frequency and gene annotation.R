@@ -1,4 +1,4 @@
-# SNV allele frequency calculation and gene annotation with annotation file
+# Function for SNV allele frequency calculation and gene annotation with annotation file
 allelefreq_geneannot <- function(sample, output){
   # load in snvs file
   snvs <- fread(paste0(sample, ".snvs.ann.tsv"))
