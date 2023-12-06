@@ -45,5 +45,14 @@ for (i in 1:n) {
   }
 }
 
-# write out annotated count table ----
+# write out annotated variant table ----
 write.csv(annotated, "annotated.csv")
+
+# extract variants in panel genes
+panelgenes <- c("ABL1","AKT1","ALK","APC","ATM","BRAF","CDH1","CDKN2A","CSF1R",
+                "CTNNB1","EGFR","ERBB2","ERBB4","EZH2","FBXW7","FGFR1","FGFR2",
+                "FGFR3","FLT3","GNA11","GNAQ","GNAS","HNF1A","HRAS","IDH1",
+                "IDH2","JAK2","JAK3","KDR","KIT","KRAS","MET","MLH1","MPL",
+                "NOTCH1","NPM1","NRAS","PDGFRA","PIK3CA","PTEN","PTPN11","RB1",
+                "RET","SMAD4","SMARCB1","SMO","SRC","STK11","TP53","VHL")
+panelvars <- subset(annotated, hgnc_symbol %in% panelgenes)
