@@ -1,7 +1,7 @@
 # run in Bash or text editor
 
-# create empty file named samples.txt
-touch ids
+# set variables
+wkdir="SET"
 
-# edit file
-vi ids
+# create and edit index file
+vi $wkdir/ids
