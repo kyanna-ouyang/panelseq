@@ -17,21 +17,21 @@ ${STRELKA_INSTALL_PATH}/bin/configureStrelkaSomaticWorkflow.py \
 --tumourBam $test_BAM \
 --referenceFasta $refFasta \
 --runDir $STRELKA_ANALYSIS_PATH \
-done < ids
+done < $wkdir/ids
 
 # Strelka2 execution
 while read i; do
 bsub -q long -R "rusage[mem=50G]" "$wkdir/results_${i}/runWorkflow.py -m local -j 8"
-done < ids
+done < $wkdir/ids
 
 # unzip vcf files
 while read i; do
 gunzip -c $wkdir/results_${i}/results/variants/somatic.indels.vcf.gz > $wkdir/results_${i}/results/variants/somatic.indels.vcf
 gunzip -c $wkdir/results_${i}/results/variants/somatic.snvs.vcf.gz > $wkdir/results_${i}/results/variants/somatic.snvs.vcf
-done < ids
+done < $wkdir/ids
 
 # move all vcf files to one folder
 while read i; do
 mv $wkdir/results_${i}/results/variants/somatic.indels.vcf $wkdir/results/${i}.somatic.indels.vcf
 mv $wkdir/results_${i}/results/variants/somatic.snvs.vcf $wkdir/results/${i}.somatic.snvs.vcf
-done < samples.txt
+done < $wkdir/ids
