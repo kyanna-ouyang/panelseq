@@ -6,7 +6,7 @@ Purpose of panelseq:
 - Investigate genetic drift in organoid cultures
 
 Steps: 
-1. create meta file (Bash): create a file with sample names to be prefixes of all files to be created and to be used in while loops
+1. Create index file (Bash or text editor): create a file with sample names or fastq IDs to be prefixes of all files to be created and to be used in while loops
 2. BWA mapping (Bash): map reads to reference genome (input: fastq --> output: sam)
 3. SAMtools convert and index (Bash): convert to, sort and index bam files (input: sam --> output: bam and bai)
 4. Strelka2 variant calling (Bash): call variants against healthy sample (input: bam and bai --> output: vcf)
