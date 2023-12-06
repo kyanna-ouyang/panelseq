@@ -13,8 +13,16 @@ Steps:
 5. SnpEff variant effect prediction (Bash): annotate variants for effect, type and severity (input: vcf --> output: vcf)
 6. BCFtools VCF manipulation (Bash): extract desired information about variants (input: vcf --> output: tsv)
 7. Calculate allele frequency (custom R code)
-8. Annotate variants with Biomart (custom R code)
+8. Annotate variants with biomaRt (custom R code)
 9. Alternative to step 8: Annotate variants with annotation file (custom R code)
+
+Links to documentation of tools used
+- BWA-mem2: https://github.com/bwa-mem2/bwa-mem2
+- SAMtools: https://www.htslib.org/doc/
+- Strelka2: https://github.com/Illumina/strelka
+- SnpEff: https://pcingola.github.io/SnpEff/
+- BCFtools: https://samtools.github.io/bcftools/bcftools.html
+- biomaRt: https://bioconductor.org/packages/release/bioc/html/biomaRt.html
 
 Note on BWA-mem2 (v2.2.1)
 - Potential error with BWA-mem2 installation: only some modes (e.g. sse41 and sse42) are executable
