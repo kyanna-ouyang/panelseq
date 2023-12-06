@@ -1,5 +1,5 @@
 # panelseq
-Pipeline for finding variants in panel genes from WES data of patient-derived organoids (but can also be applied for general variant calling from WES data of patient tissues and organoids and from WGS data of bacterial and fungal isolates)
+Pipeline for finding single nucleotide and insertion/deletion variants in panel genes from WES data of patient-derived organoids (but can also be applied for general variant calling from WES data of patient tissues and organoids and from WGS data of bacterial and fungal isolates)
 
 Purpose of panelseq:
 - Quick and cheap way to check mutations in organoid cultures
