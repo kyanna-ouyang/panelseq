@@ -16,10 +16,10 @@ Steps:
 8. Annotate variants with Biomart (custom R code)
 9. Alternative to step 8: Annotate variants with annotation file (custom R code)
 
-Notes on tools used:
-BWA-mem2 (v2.2.1)
+Note on BWA-mem2 (v2.2.1)
 - Potential error with BWA-mem2 installation: only some modes (e.g. sse41 and sse42) are executable
 - Solution: manually specify to use one of the executable modes
-BCFtools
-- useful link: https://eriqande.github.io/eca-bioinf-handbook/basic-handling-of-vcf-files.html
-- useful link: https://en.wikipedia.org/wiki/Variant_Call_Format
+  
+Useful links for BCFtools
+- https://eriqande.github.io/eca-bioinf-handbook/basic-handling-of-vcf-files.html
+- https://en.wikipedia.org/wiki/Variant_Call_Format
