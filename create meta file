@@ -1,7 +1,7 @@
 # run in Bash
 
 # create empty file named samples.txt
-touch samples.txt
+touch ids
 
 # edit file
-vi samples.txt
+vi ids
